@@ -54,7 +54,7 @@ trait ShapelessStream {
       selOutletValue: SelectOutletValue.Aux[CIn, CInOutlets],
       flowBuilder: FlowBuilderC.Aux[CIn, COut, CInOutlets, HL, COutInlets]
   ): Flow[CIn, COut, Unit] =
-    Flow() { implicit builder =>
+    FlowGraph.create() { implicit builder =>
     
       import FlowGraph.Implicits._
 

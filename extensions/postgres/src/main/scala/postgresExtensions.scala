@@ -31,7 +31,7 @@ trait PgStream {
    * @return
    */
   def getQueryResultAsStream(sqlQuery: String, options: Map[String, String], pgVersion : PostgresVersion = PostgresVersion.Nine, outputStreamTransformer : OutputStream => OutputStream = identity)
-                      (implicit conn: PGConnection, ec: ExecutionContextForBlockingOps): Source[ByteString, (akka.actor.ActorRef, Unit)] = {
+                      (implicit conn: PGConnection, ec: ExecutionContextForBlockingOps): Source[ByteString, akka.actor.ActorRef] = {
     val copyManager = conn.getCopyAPI()
     val os = new PipedOutputStream()
     val is = new PipedInputStream(os)
@@ -52,7 +52,7 @@ trait PgStream {
           os.close()
       }
     }(ec.value)
-    Source.concat(SourceExt.fromStream(is), errorStream)
+    SourceExt.fromStream(is).concat(errorStream)
   }
 
   /**

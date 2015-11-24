@@ -7,13 +7,11 @@ import sbtrelease.ReleaseStateTransformations._
 import sbtrelease.Utilities._
 import sbtunidoc.Plugin.UnidocKeys._
 
-import bintray.Plugin._
-
 organization in ThisBuild := "com.mfglabs"
 
 name in ThisBuild := "akka-stream-extensions"
 
-scalaVersion in ThisBuild := "2.11.6"
+scalaVersion in ThisBuild := "2.11.7"
 
 publishMavenStyle in ThisBuild := true
 
@@ -28,7 +26,7 @@ resolvers in ThisBuild ++= Seq(
 lazy val commonSettings = Seq(
   scmInfo := Some(ScmInfo(url("https://github.com/MfgLabs/akka-stream-extensions"),
     "git@github.com:MfgLabs/akka-stream-extensions.git")),
-  libraryDependencies += "org.scalatest" %% "scalatest" % "2.1.6" % "test"
+  libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 )
 
 lazy val publishSettings = Seq(
@@ -39,8 +37,9 @@ lazy val publishSettings = Seq(
   publishMavenStyle := true,
   publishArtifact in packageDoc := false,
   publishArtifact in Test := false,
-  pomIncludeRepository := { _ => false }
-) ++ bintrayPublishSettings
+  pomIncludeRepository := { _ => false },
+  bintrayOrganization := Some("projectseptemberinc")
+)
 
 lazy val noPublishSettings = Seq(
   publish := (),
@@ -50,7 +49,7 @@ lazy val noPublishSettings = Seq(
 
 lazy val docSettings = Seq(
   autoAPIMappings := true,
-  unidocProjectFilter in (ScalaUnidoc, unidoc) := inProjects(commons, postgres, elasticsearch, shapeless),
+  unidocProjectFilter in (ScalaUnidoc, unidoc) := inProjects(commons, postgres, elasticsearch/*, shapeless*/),
   site.addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), "api"),
   ghpagesNoJekyll := false,
   siteMappings ++= Seq(
@@ -66,12 +65,12 @@ lazy val docSettings = Seq(
 )
 
 lazy val all = project.in(file("."))
-  .aggregate(commons, shapeless, postgres, elasticsearch, docs)
+  .aggregate(commons, /*shapeless,*/ postgres, elasticsearch, docs)
   .settings(
     name := "commons-all",
     noPublishSettings
   )
-  .dependsOn(commons, shapeless, postgres, elasticsearch, docs)
+  .dependsOn(commons, /*shapeless,*/ postgres, elasticsearch, docs)
 
 lazy val docs = project
   .settings(moduleName := "akka-stream-ext-docs")
@@ -82,7 +81,7 @@ lazy val docs = project
   .settings(ghpages.settings)
   .settings(tutSettings)
   .settings(docSettings)
-  .dependsOn(commons, postgres, shapeless, elasticsearch)
+  .dependsOn(commons, postgres, /*shapeless,*/ elasticsearch)
 
 site.jekyllSupport()
 
@@ -90,7 +89,7 @@ lazy val commons = project.in(file("commons"))
   .settings(
     name := "akka-stream-extensions",
     libraryDependencies ++= Seq(
-      "com.typesafe.akka" %% "akka-stream-experimental" % "1.0"
+      "com.typesafe.akka" %% "akka-stream-experimental" % "2.0-M1"
     ),
     commonSettings,
     publishSettings
@@ -102,7 +101,7 @@ lazy val postgres = project.in(file("extensions/postgres"))
     name := "akka-stream-extensions-postgres",
     resolvers += Resolver.bintrayRepo("softprops", "maven"),
     libraryDependencies ++= Seq(
-      "com.typesafe.akka" %% "akka-stream-experimental" % "1.0",
+      "com.typesafe.akka" %% "akka-stream-experimental" % "2.0-M1",
       "org.postgresql" % "postgresql"  % "9.3-1102-jdbc4",
       "me.lessis" %% "tugboat" % "0.2.0" % "test"
     ),
@@ -117,21 +116,22 @@ lazy val elasticsearch = project.in(file("extensions/elasticsearch"))
   .settings(
     name := "akka-stream-extensions-elasticsearch",
     libraryDependencies ++= Seq(
-      "com.typesafe.akka" %% "akka-stream-experimental" % "1.0",
-      "org.elasticsearch" % "elasticsearch" % "1.3.2"
+      "com.typesafe.akka" %% "akka-stream-experimental" % "2.0-M1",
+      "org.elasticsearch" % "elasticsearch"             % "1.7.1"
     ),
     commonSettings,
     publishSettings
   )
-
+/*
 lazy val shapeless = project.in(file("extensions/shapeless"))
  .dependsOn(commons)
  .settings(
    name := "akka-stream-extensions-shapeless",
    libraryDependencies ++= Seq(
-     "com.typesafe.akka" %% "akka-stream-experimental" % "1.0",
-     "com.chuusai"       %% "shapeless"                % "2.2.0-RC6"
+     "com.typesafe.akka" %% "akka-stream-experimental" % "2.0-M1",
+     "com.chuusai"       %% "shapeless"                % "2.2.5"
    ),
    commonSettings,
    publishSettings
  )
+*/
