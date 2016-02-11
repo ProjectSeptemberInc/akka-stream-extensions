@@ -123,8 +123,8 @@ trait FlowExt {
     case object Tick
 
     val flow = Flow.fromGraph(
-      FlowGraph.create() { implicit builder =>
-        import FlowGraph.Implicits._
+      GraphDSL.create() { implicit builder =>
+        import GraphDSL.Implicits._
 
         val rateLimiter = Source.tick(0 second, interval, Tick)
 
@@ -313,8 +313,8 @@ trait FlowExt {
    */
   def zipWithConstantLazyAsync[A, B](futB: => Future[B])(implicit ec: ExecutionContext): Flow[A, (A, B), Unit] = {
     Flow.fromGraph(
-      FlowGraph.create() { implicit builder =>
-        import FlowGraph.Implicits._
+      GraphDSL.create() { implicit builder =>
+        import GraphDSL.Implicits._
 
         val zip = builder.add(Zip[A, B]())
 

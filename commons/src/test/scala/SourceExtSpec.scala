@@ -213,7 +213,7 @@ class SourceExtSpec extends FlatSpec with Matchers with ScalaFutures {
     }
 
     // Testing failure with standard Source(fut)
-    val source2 = Source(futTs)
+    val source2 = Source.fromFuture(futTs)
     val t4 = System.nanoTime()
     whenReady(source2.runWith(SinkExt.collect)) {
       case t +: _ => assert(t < t4)
@@ -238,7 +238,7 @@ class SourceExtSpec extends FlatSpec with Matchers with ScalaFutures {
     }
 
     // Testing failure with standard Source(fut)
-    val source2 = Source(futTs)
+    val source2 = Source.fromFuture(futTs)
     val t4 = System.nanoTime()
     whenReady(source2.runWith(SinkExt.collect)) {
       case t +: _ => assert(t < t4)
